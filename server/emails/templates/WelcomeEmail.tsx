@@ -46,16 +46,20 @@ export default class WelcomeEmail extends BaseEmail<Props, BeforeSend> {
   }
 
   protected renderAsText({ teamUrl }: Props) {
+    const guideSection = env.BRANDING_ENABLED
+      ? `
+${this.t("Or, learn more about everything {{ appName }} can do in the guide", { appName: env.APP_NAME })}:
+https://docs.getoutline.com/s/guide
+`
+      : "";
+
     return `
 ${this.t("Welcome to {{ appName }}!", { appName: env.APP_NAME })}
 
 ${this.t("{{ appName }} is a place for your team to build and share knowledge.", { appName: env.APP_NAME })}
 
 ${this.t("To get started, head to the home screen and try creating a collection to help document your processes, create playbooks, or plan your team's work.")}
-
-${this.t("Or, learn more about everything {{ appName }} can do in the guide", { appName: env.APP_NAME })}:
-https://docs.getoutline.com/s/guide
-
+${guideSection}
 ${teamUrl}/home
 `;
   }
@@ -82,15 +86,20 @@ ${teamUrl}/home
               "To get started, head to the home screen and try creating a collection to help document your processes, create playbooks, or plan your team's work."
             )}
           </p>
-          <p>
-            {this.t("Or, learn more about everything {{ appName }} can do in", {
-              appName: env.APP_NAME,
-            })}{" "}
-            <a href="https://docs.getoutline.com/s/guide">
-              {this.t("the guide")}
-            </a>
-            .
-          </p>
+          {env.BRANDING_ENABLED && (
+            <p>
+              {this.t(
+                "Or, learn more about everything {{ appName }} can do in",
+                {
+                  appName: env.APP_NAME,
+                }
+              )}{" "}
+              <a href="https://docs.getoutline.com/s/guide">
+                {this.t("the guide")}
+              </a>
+              .
+            </p>
+          )}
           <EmptySpace height={10} />
           <p>
             <Button href={welcomeLink}>

@@ -10,6 +10,7 @@ import { useTeamContext } from "~/components/TeamContext";
 import useCurrentUser from "~/hooks/useCurrentUser";
 import useQuery from "~/hooks/useQuery";
 import useShare from "@shared/hooks/useShare";
+import env from "~/env";
 import { parseDomain } from "@shared/utils/domains";
 
 type Props = {
@@ -29,7 +30,7 @@ function SharedDocument({ document }: Props) {
     () => parseDomain(window.location.origin).custom,
     []
   );
-  const showBranding = !isCustomDomain && !user;
+  const showBranding = !isCustomDomain && !user && env.BRANDING_ENABLED;
   const searchTermProcessed = useRef<string | null>(null);
 
   const tocPosition = hasHeadings

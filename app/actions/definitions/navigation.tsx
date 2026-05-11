@@ -16,6 +16,7 @@ import {
 } from "outline-icons";
 import { UrlHelper } from "@shared/utils/UrlHelper";
 import { isMac } from "@shared/utils/browser";
+import env from "~/env";
 import stores from "~/stores";
 import type SearchQuery from "~/models/SearchQuery";
 import KeyboardShortcuts from "~/scenes/KeyboardShortcuts";
@@ -156,6 +157,7 @@ export const openDocumentation = createExternalLinkAction({
   icon: <OpenIcon />,
   url: UrlHelper.guide,
   target: "_blank",
+  visible: () => env.BRANDING_ENABLED,
 });
 
 export const openAPIDocumentation = createExternalLinkAction({
@@ -166,6 +168,7 @@ export const openAPIDocumentation = createExternalLinkAction({
   icon: <OpenIcon />,
   url: UrlHelper.developers,
   target: "_blank",
+  visible: () => env.BRANDING_ENABLED,
 });
 
 export const toggleSidebar = createAction({
@@ -184,6 +187,7 @@ export const openFeedbackUrl = createExternalLinkAction({
   icon: <EmailIcon />,
   url: UrlHelper.contact,
   target: "_blank",
+  visible: () => env.BRANDING_ENABLED,
 });
 
 export const openBugReportUrl = createExternalLinkAction({
@@ -204,6 +208,7 @@ export const openChangelog = createExternalLinkAction({
   icon: <OpenIcon />,
   url: UrlHelper.changelog,
   target: "_blank",
+  visible: () => env.BRANDING_ENABLED,
 });
 
 export const openKeyboardShortcuts = createAction({

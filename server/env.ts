@@ -381,6 +381,20 @@ export class Environment {
     environment.ENABLE_UPDATES ?? environment.TELEMETRY ?? "true"
   );
 
+  /**
+   * When false, Outline-vendor branding is hidden from end-user surfaces:
+   * the "Powered by Outline" attribution on public share pages, the Twitter
+   * link in email footers, the docs.getoutline.com links in the welcome
+   * email, and the help-menu entries pointing at outline.com (guide,
+   * developers, contact, changelog). The GitHub issue tracker link is
+   * unaffected. Defaults to true (no behaviour change).
+   */
+  @Public
+  @IsBoolean()
+  public BRANDING_ENABLED = this.toBoolean(
+    environment.BRANDING_ENABLED ?? "true"
+  );
+
   // Third-party services
 
   /**
