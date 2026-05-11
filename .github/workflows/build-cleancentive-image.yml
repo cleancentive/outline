@@ -24,13 +24,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build base image (with our source patched in)
+      - name: Build and push base image (with our source patched in)
         uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile.base
-          tags: outline-base:local
-          load: true
+          push: true
+          tags: ghcr.io/cleancentive/outline-base:${{ github.sha }}
           cache-from: type=gha,scope=base
           cache-to: type=gha,scope=base,mode=max
 
@@ -40,7 +40,7 @@ jobs:
           context: .
           file: Dockerfile
           build-args: |
-            BASE_IMAGE=outline-base:local
+            BASE_IMAGE=ghcr.io/cleancentive/outline-base:${{ github.sha }}
           push: true
           tags: |
             ghcr.io/cleancentive/outline:${{ github.sha }}
