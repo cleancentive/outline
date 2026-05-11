@@ -1,3 +1,41 @@
+# Cleancentive Outline Fork
+
+This is a minimal fork of [outline/outline](https://github.com/outline/outline)
+maintained for the [cleancentive](https://github.com/cleancentive/cleancentive)
+project. All credit for Outline as a product goes to the upstream maintainers.
+
+**Branch:** [`cleancentive-customizations`](https://github.com/cleancentive/outline/tree/cleancentive-customizations) — rebased on each Outline release tag.
+
+**Patches applied** (`git log v1.7.1..cleancentive-customizations`):
+
+1. **`BRANDING_ENABLED` env flag** — when set to `false`, hides Outline-vendor
+   branding on end-user surfaces: "Powered by Outline" footer on public share
+   pages, Twitter link in email footers, `docs.getoutline.com` links in the
+   welcome email, and `outline.com` entries in the help menu (guide,
+   developers, contact, changelog). The GitHub issue-tracker link is kept.
+   Default is `true` (no behaviour change). See commit
+   [`62543c864`](https://github.com/cleancentive/outline/commit/62543c864).
+
+**Image builds:** `.github/workflows/build-cleancentive-image.yml` publishes
+`ghcr.io/cleancentive/outline:<sha>` and `:latest` on every push to
+`cleancentive-customizations`. cleancentive's `docker-compose.{dev,prod}.yml`
+pulls from there.
+
+**Rebase workflow:**
+
+```bash
+git fetch upstream --tags
+git rebase v<new-release-tag> cleancentive-customizations
+# resolve any conflicts (patches are env-gated and small — usually trivial)
+git push --force-with-lease origin cleancentive-customizations
+```
+
+---
+
+The rest of this README is the upstream Outline documentation, unchanged.
+
+---
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./public/logos/outline-logo-dark.png" height="29">
