@@ -91,7 +91,7 @@ export const renderApp = async (
     description = "A modern team knowledge base for your internal documentation, product specs, support answers, meeting notes, onboarding, &amp; more…",
     canonical = "",
     content = "",
-    shortcutIcon = `${env.CDN_URL || ""}/images/favicon-32.png`,
+    shortcutIcon = env.FAVICON_URL || `${env.CDN_URL || ""}/images/favicon-32.png`,
     allowIndexing = true,
   } = options;
 
@@ -138,14 +138,18 @@ export const renderApp = async (
       <script type="module" nonce="${ctx.state.cspNonce}" src="${viteHost}/static/${entry}"></script>
     `;
 
+  const isSvgIcon = shortcutIcon.endsWith(".svg");
+  const shortcutIconType = isSvgIcon ? "image/svg+xml" : "image/png";
+  const shortcutIconSizes = isSvgIcon ? "any" : "32x32";
+
   let headTags = `
     <meta name="robots" content="${allowIndexing ? "index, follow" : "noindex, nofollow"}" />
     <link rel="canonical" href="${escape(canonical)}" />
     <link
       rel="shortcut icon"
-      type="image/png"
+      type="${shortcutIconType}"
       href="${escape(shortcutIcon)}"
-      sizes="32x32"
+      sizes="${shortcutIconSizes}"
     />
     `;
 

@@ -258,6 +258,19 @@ export class Environment {
   );
 
   /**
+   * Optional URL of a custom favicon (the browser-tab icon). When set, this
+   * overrides the bundled /images/favicon-32.png. May point to a PNG or SVG.
+   */
+  @Public
+  @IsOptional()
+  @IsUrl({
+    protocols: ["http", "https"],
+    require_protocol: true,
+    require_tld: false,
+  })
+  public FAVICON_URL = this.toOptionalString(environment.FAVICON_URL);
+
+  /**
    * The fully qualified, external facing domain name of the collaboration
    * service, if different (unlikely)
    */
