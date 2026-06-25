@@ -7,6 +7,7 @@ import {
   GetObjectCommand,
   HeadObjectCommand,
   CopyObjectCommand,
+  PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import "@aws-sdk/signature-v4-crt"; // https://github.com/aws/aws-sdk-js-v3#functionality-requiring-aws-common-runtime-crt
@@ -42,7 +43,7 @@ export default class S3Storage extends BaseStorage {
     contentType = "image"
   ) {
     const params: PresignedPostOptions = {
-      Bucket: env.AWS_S3_UPLOAD_BUCKET_NAME as string,
+      Bucket: this.getBucket(),
       Key: key,
       Conditions: compact([
         ["content-length-range", 0, maxUploadSize],
@@ -58,6 +59,57 @@ export default class S3Storage extends BaseStorage {
     };
 
     return createPresignedPost(this.client, params);
+  }
+
+  /**
+   * Returns a presigned PUT URL with Content-Length signed into the request so
+   * S3 rejects uploads that do not match the declared size.
+   *
+   * @param key The path to store the file at.
+   * @param acl The ACL to use.
+   * @param contentLength The exact content length in bytes.
+   * @param contentType The content type of the file.
+   * @returns The presigned PUT URL and required headers.
+   */
+  public async getPresignedPut(
+    key: string,
+    _acl: string,
+    contentLength: number,
+    contentType: string
+  ): Promise<{ url: string; headers: Record<string, string> }> {
+    const contentDisposition = this.getContentDisposition(contentType);
+    const cacheControl = "max-age=31557600";
+
+    const command = new PutObjectCommand({
+      Bucket: this.getBucket(),
+      Key: key,
+      ContentType: contentType,
+      ContentLength: contentLength,
+      ContentDisposition: contentDisposition,
+      CacheControl: cacheControl,
+      ...(env.AWS_S3_ACL && { ACL: env.AWS_S3_ACL as ObjectCannedACL }),
+    });
+
+    let url = await getSignedUrl(this.client, command, {
+      expiresIn: 3600,
+    });
+
+    if (env.AWS_S3_ACCELERATE_URL) {
+      url = url.replace(
+        env.AWS_S3_UPLOAD_BUCKET_URL,
+        env.AWS_S3_ACCELERATE_URL
+      );
+    }
+
+    return {
+      url,
+      headers: {
+        "Content-Type": contentType,
+        "Content-Length": String(contentLength),
+        "Content-Disposition": contentDisposition,
+        "Cache-Control": cacheControl,
+      },
+    };
   }
 
   private getPublicEndpoint(isServerUpload?: boolean) {
